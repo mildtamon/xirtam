@@ -7,6 +7,7 @@ fn dot_product(x: &[f64], y: &[f64]) -> f64 {
 
 fn matrix_mult(m1: Vec<Vec<i32>>, m2: Vec<Vec<i32>>) -> f64 {
     // TODO: implement parallel matrix multiply
+    // idea: m1.iter(by row) m2.zip(by col) and use dot product on.
 
     panic!("not implemented yet!");
 }
