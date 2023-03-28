@@ -10,7 +10,8 @@ fn matrix_mult(m1: Vec<Vec<f64>>, m2: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let mut ans = vec![vec![0f64; m2[0].len()]; m1.len()];
     let m2t: Vec<Vec<f64>> = matrix_transpose::transpose(m2.clone());
 
-    // currently sequential
+    // currently sequential (make faster)
+    // check size (m1 row and m2 col need to be match)
     (0..ans.len())
         .for_each(|i|(0..ans[0].len())
             .for_each(|j| ans[i][j] = dot_product(&m1[i], &m2t[j])));
