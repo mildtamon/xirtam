@@ -5,9 +5,10 @@ fn dot_product(x: &[f64], y: &[f64]) -> f64 {
     x.par_iter().zip(y).map(|(&xk, &yk)| xk * yk).sum()
 }
 
-fn matrix_mult(m1: Vec<Vec<i32>>, m2: Vec<Vec<i32>>) -> f64 {
+fn matrix_mult(m1: Vec<Vec<f64>>, m2: Vec<Vec<f64>>) -> f64 {
     // TODO: implement parallel matrix multiply
     // idea: m1.iter(by row) m2.zip(by col) and use dot product on.
+    let ans = vec![vec![0f64; m2[0].len()]; m1.len()];
 
     panic!("not implemented yet!");
 }
@@ -28,9 +29,11 @@ mod tests {
     #[test]
     fn mult_test() {
         // TODO: implement test cases -> error when size not match
-        let itr1 = vec![1, 2, 3, 4];
-        let itr2 = vec![11, 12, 13 , 14];
-        let itr3 = vec![21, 22, 23, 24];
-
+        println!("{:?}", matrix_mult(vec![vec![1.0, 2.0, 3.0],
+                                                vec![4.0, 5.0, 6.0],
+                                                vec![7.0, 8.0, 9.0]],
+                                     vec![vec![1.0, 2.0, 3.0],
+                                                vec![4.0, 5.0, 6.0],
+                                                vec![7.0, 8.0, 9.0]]));
     }
 }
