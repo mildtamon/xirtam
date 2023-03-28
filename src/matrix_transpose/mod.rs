@@ -1,6 +1,6 @@
 use rayon::iter::*;
 
-fn transpose(m: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+pub fn transpose(m: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     // TODO: implement parallel matrix transpose
     (0..m[0].len()).into_par_iter()
         .map(|i| m.par_iter().map(|row| row[i]).collect())
