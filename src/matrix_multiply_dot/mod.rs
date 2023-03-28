@@ -22,6 +22,13 @@ fn matrix_mult(m1: Vec<Vec<f64>>, m2: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
 mod tests {
     use std::iter::zip;
     use super::{dot_product, matrix_mult};
+    use std::time::{Duration, Instant};
+
+    fn timed<R, F>(f: F) -> (R, Duration) where F: Fn() -> R {
+        let starting_point = Instant::now();
+        let res = f();
+        (res, starting_point.elapsed())
+    }
 
     #[test]
     fn dot_test() {
@@ -29,6 +36,14 @@ mod tests {
         assert_eq!(0.0, dot_product(&vec![], &vec![]));
         assert_eq!(0.0, dot_product(&vec![0.0], &vec![0.0]));
         assert_eq!(14.0, dot_product(&vec![1.0, 2.0, 3.0], &vec![1.0, 2.0, 3.0]));
+
+        let a = (0..=1024).map(|a| a as f64).collect::<Vec<_>>();
+        let (output, time) = timed(|| dot_product(&a, &a));
+        println!("output: {:?} time: {:?}", output, time);
+
+        let b = (0..=20_000_000).map(|a| a as f64).collect::<Vec<_>>();
+        let (output, time) = timed(|| dot_product(&b, &b));
+        println!("output: {:?} time: {:?}", output, time);
     }
 
     #[test]
