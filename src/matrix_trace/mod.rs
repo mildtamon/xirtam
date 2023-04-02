@@ -2,14 +2,13 @@ use rayon::iter::*;
 
 fn seq_trace(m: &Vec<Vec<f64>>) -> (f64) {
     // sequential matrix trace is better
-    let mut sum: f64 = 0.0;
-    for index in 0..m.len() { sum += m[index][index] }
-    sum
-    // (0..m.len()).into_iter().map(|r| m[r][r]).sum()
+    (0..m.len()).into_iter().map(|r| m[r][r]).sum()
 }
 
 fn par_trace(m: &Vec<Vec<f64>>) -> (f64) {
-    (0..m.len()).into_par_iter().map(|r| m[r][r]).sum()
+    let mut sum = 0.0;
+    (0..m.len()).into_iter().for_each(|index| sum += m[index][index]);
+    sum
 }
 
 #[cfg(test)]
