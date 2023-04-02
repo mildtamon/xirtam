@@ -22,7 +22,7 @@ mod tests {
         assert_eq!(15.0, seq_trace(&vec![vec![1.0 ,2.0 ,3.0],
                                         vec![4.0 ,5.0 ,6.0],
                                         vec![7.0 ,8.0 ,9.0]]));
-        assert_eq!(0.0, trace(&vec![]));
+        assert_eq!(0.0, seq_trace(&vec![]));
         assert_eq!(15.0, par_trace(&vec![vec![1.0 ,2.0 ,3.0],
                                      vec![4.0 ,5.0 ,6.0],
                                      vec![7.0 ,8.0 ,9.0]]));
