@@ -2,9 +2,10 @@ use std::ops::Index;
 use rayon::prelude::*;
 
 // determinant
+// input matrix -> REF matrix -> det(REF matrix)
 fn det(m: Vec<Vec<f64>>) -> f64 {
     // TODO: implement parallel matrix determinant using QR decomposition
-    forward_elim(&m).par_iter().enumerate().map(|(r,v)| v.index(r)).product()
+    // forward_elim(&m).par_iter().enumerate().map(|(r,v)| v.index(r)).product()
     panic!("not implemented yet!");
 }
 
