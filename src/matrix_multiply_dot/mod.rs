@@ -1,6 +1,7 @@
 use rayon::iter::*;
 use crate::matrix_transpose;
 
+// dot product and matrix multiply
 fn par_dot_product(x: &Vec<f64>, y: &Vec<f64>) -> f64 {
     x.par_iter().zip(y).map(|(&xk, &yk)| xk * yk).sum()
 }
@@ -94,12 +95,10 @@ mod tests {
         let two_d_matrix = vec![(0..=1024).map(|a| a as f64).collect::<Vec<_>>(); 1024];
 
         let (output, time) = timed(|| seq_matrix_mult(two_d_matrix.clone(), two_d_matrix.clone()));
-        println!("sequential matrix multiply with 1024-size   time: {:?}", time);
-        // println!("sequential matrix multiply with 1024-size   time: {:?}    output: {:?}", time, output);
+        println!("sequential matrix multiply with 1024-size   time: {:?}    output: {:?}", time, output);
 
         let (output, time) = timed(|| par_matrix_mult(two_d_matrix.clone(), two_d_matrix.clone()));
-        println!("parallel matrix multiply with 1024-size     time: {:?}", time);
-        // println!("parallel matrix multiply with 1024-size     time: {:?}    output: {:?}", time, output);
+        println!("parallel matrix multiply with 1024-size     time: {:?}    output: {:?}", time, output);
     }
 
 }
