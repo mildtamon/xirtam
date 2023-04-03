@@ -95,10 +95,12 @@ mod tests {
         let two_d_matrix = vec![(0..=1024).map(|a| a as f64).collect::<Vec<_>>(); 1024];
 
         let (output, time) = timed(|| seq_matrix_mult(two_d_matrix.clone(), two_d_matrix.clone()));
-        println!("sequential matrix multiply with 1024-size   time: {:?}    output: {:?}", time, output);
+        println!("sequential matrix multiply with 1024-size   time: {:?}    ", time);
+        // println!("sequential matrix multiply with 1024-size   time: {:?}    output: {:?}", time, output);
 
         let (output, time) = timed(|| par_matrix_mult(two_d_matrix.clone(), two_d_matrix.clone()));
-        println!("parallel matrix multiply with 1024-size     time: {:?}    output: {:?}", time, output);
+        println!("parallel matrix multiply with 1024-size     time: {:?}   ", time);
+        // println!("parallel matrix multiply with 1024-size     time: {:?}    output: {:?}", time, output);
     }
 
 }
