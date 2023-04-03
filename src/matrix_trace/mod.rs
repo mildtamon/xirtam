@@ -6,9 +6,7 @@ fn seq_trace(m: &Vec<Vec<f64>>) -> (f64) {
 }
 
 fn par_trace(m: &Vec<Vec<f64>>) -> (f64) {
-    let mut sum = 0.0;
-    (0..m.len()).into_iter().for_each(|index| sum += m[index][index]);
-    sum
+    (0..m.len()).into_par_iter().map(|index| m[index][index]).sum()
 }
 
 #[cfg(test)]
