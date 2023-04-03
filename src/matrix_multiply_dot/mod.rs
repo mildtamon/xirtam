@@ -2,7 +2,7 @@ use rayon::iter::*;
 use crate::matrix_transpose;
 
 fn par_dot_product(x: &Vec<f64>, y: &Vec<f64>) -> f64 {
-    x.par_iter().zip(y).map(|(&xk, &yk)| xk * yk).sum()
+    x.par_iter().zip(y.par_iter()).map(|(&xk, &yk)| xk * yk).sum()
 }
 
 fn seq_dot_product(x: &Vec<f64>, y: &Vec<f64>) -> f64 {
@@ -53,16 +53,18 @@ mod tests {
         assert_eq!(14.0, par_dot_product(&vec![1.0, 2.0, 3.0], &vec![1.0, 2.0, 3.0]));
 
         let one_d_matrix = (0..=1024).map(|a| a as f64).collect::<Vec<_>>();
+        let big_matrix = (0..=20_000_000).map(|a| a as f64).collect::<Vec<_>>();
+
         let (output, time) = timed(|| seq_dot_product(&one_d_matrix, &one_d_matrix));
         println!("sequential dot product with 1024-size   output: {:?}  time: {:?}", output, time);
 
         let (output, time) = timed(|| par_dot_product(&one_d_matrix, &one_d_matrix));
         println!("parallel dot product with 1024-size     output: {:?}  time: {:?}", output, time);
 
-        let (output, time) = timed(|| seq_dot_product(&one_d_matrix, &one_d_matrix));
+        let (output, time) = timed(|| seq_dot_product(&big_matrix, &big_matrix));
         println!("sequential dot product with 20_000_000-size   output: {:?}    time: {:?}", output, time);
 
-        let (output, time) = timed(|| par_dot_product(&one_d_matrix, &one_d_matrix));
+        let (output, time) = timed(|| par_dot_product(&big_matrix, &big_matrix));
         println!("parallel dot product with 20_000_000-size     output: {:?}    time: {:?}", output, time);
     }
 
