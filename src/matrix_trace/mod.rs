@@ -1,7 +1,7 @@
 use rayon::iter::*;
 
 fn seq_trace(m: &Vec<Vec<f64>>) -> (f64) {
-    // sequential matrix trace is better (in smaller matrix)
+    // sequential matrix trace is better
     (0..m.len()).into_iter().map(|index| m[index][index]).sum()
 }
 
