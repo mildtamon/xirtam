@@ -1,7 +1,7 @@
 use rayon::iter::*;
 use crate::matrix_transpose;
 
-fn par_dot_product(x: &Vec<f64>, y: &Vec<f64>) -> f64 {
+pub fn par_dot_product(x: &Vec<f64>, y: &Vec<f64>) -> f64 {
     x.par_iter().zip(y.par_iter()).map(|(&xk, &yk)| xk * yk).sum()
 }
 
@@ -18,7 +18,7 @@ fn seq_matrix_mult(m1: Vec<Vec<f64>>, m2: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     ans
 }
 
-fn par_matrix_mult(m1: Vec<Vec<f64>>, m2: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+pub fn par_matrix_mult(m1: Vec<Vec<f64>>, m2: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let m2t: Vec<Vec<f64>> = matrix_transpose::par_transpose(m2.clone());
     m1.par_iter()
         .map(|r| {
