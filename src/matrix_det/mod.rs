@@ -22,16 +22,16 @@ mod tests {
     #[test]
     fn det_test() {
         // TODO: implement test cases
-        let matrix = (vec![
+        let matrix = vec![
             vec![2.0, 1.0, -1.0],
             vec![-3.0, -1.0, 2.0],
             vec![-2.0, 1.0, 2.0],
-        ]);
-        let result = (vec![
+        ];
+        let result = vec![
             vec![2.0, 1.0, -1.0],
             vec![0.0, 0.5, 0.5],
             vec![0.0, 0.0, -1.0],
-        ]);
+        ];
         assert_eq!(forward_elim(&matrix),result)
     }
 }

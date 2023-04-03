@@ -1,14 +1,12 @@
 use rayon::iter::*;
 
 pub fn seq_transpose(m: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
-    // TODO: implement sequential matrix transpose
     (0..m[0].len()).into_iter()
         .map(|i| m.iter().map(|row| row[i]).collect())
         .collect()
 }
 
 pub fn par_transpose(m: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
-    // TODO: implement parallel matrix transpose
     (0..m[0].len()).into_par_iter()
         .map(|i| m.par_iter().map(|row| row[i]).collect())
         .collect()
@@ -26,15 +24,23 @@ mod tests {
     }
     #[test]
     fn transpose_test() {
-        println!("{:?}", seq_transpose(vec![vec![1.0, 3.0, 5.0], vec![2.0, 4.0, 6.0]]));
-        println!("{:?}", par_transpose(vec![vec![1.0, 3.0, 5.0], vec![2.0, 4.0, 6.0]]));
+        assert_eq!(vec![vec![1.0, 2.0],
+                        vec![3.0, 4.0],
+                        vec![5.0, 6.0]],
+                   seq_transpose(vec![vec![1.0, 3.0, 5.0],
+                                      vec![2.0, 4.0, 6.0]]));
+        assert_eq!(vec![vec![1.0, 2.0],
+                        vec![3.0, 4.0],
+                        vec![5.0, 6.0]],
+                   par_transpose(vec![vec![1.0, 3.0, 5.0],
+                                      vec![2.0, 4.0, 6.0]]));
 
         let two_d_matrix = vec![(0..=1024).map(|a| a as f64).collect::<Vec<_>>(); 1024];
 
         let (output, time) = timed(|| seq_transpose(two_d_matrix.clone()));
-        println!("sequential matrix transpose with 1024-size    time: {:?}  output: {:?}", time, output);
+        println!("sequential matrix transpose with 1024-size    time: {:?}", time);
 
         let (output, time) = timed(|| par_transpose(two_d_matrix.clone()));
-        println!("parallel matrix transpose with 1024-size      time: {:?}  output: {:?}", time, output);
+        println!("parallel matrix transpose with 1024-size      time: {:?}", time);
     }
 }
