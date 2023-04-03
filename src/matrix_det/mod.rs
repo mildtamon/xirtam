@@ -1,38 +1,31 @@
-use std::ops::Index;
 use rayon::prelude::*;
 use crate::matrix_multiply_dot::{par_dot_product, par_matrix_mult};
 use crate::matrix_transpose;
-use crate::matrix_transpose::par_transpose;
 
-// determinant
-// input matrix -> REF matrix -> det(REF matrix)
 fn det(m: Vec<Vec<f64>>) -> f64 {
-    // TODO: implement parallel matrix determinant using QR decomposition
-    let r:f64 = qr_decomposition(&m).1.par_iter()
+    let (q, r) = qr_decomposition(m);
+    r.par_iter()
         .enumerate()
         .map(|(i, row)| row[i])
-        .product();
-    r
+        .product()
 }
 
-fn forward_elim(m: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
-    panic!("not implemented yet!");
-}
-
-fn normalize(v: &Vec<f64>) -> Vec<f64> {
+// euclidean norm
+fn normalize(v: Vec<f64>) -> Vec<f64> {
     let norm: f64 = v.iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
-    v.iter().map(|x| x / norm).collect()
+    v.iter().map(|each| each / norm).collect()
 }
 
+// projection of vector v to u
 fn project(v: &Vec<f64>, u: &Vec<f64>) -> Vec<f64> {
-    let scalar = par_dot_product(v, u) / par_dot_product(u, u);
-    u.iter().map(|x| x * scalar).collect()
+    let norm_u = u.iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
+    u.par_iter().map(|each| each *( par_dot_product(v, u) / norm_u)).collect()
 }
 
-fn gram_schmidt(a: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+fn gram_schmidt(m: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let mut q: Vec<Vec<f64>> = vec![];
-    for j in 0..a[0].len() {
-        let mut v: Vec<f64> = a.iter().map(|row| row[j]).collect();
+    for j in 0..m[0].len() {
+        let mut v: Vec<f64> = m.par_iter().map(|row| row[j]).collect();
         for i in 0..j {
             let u = &q[i];
             let proj = project(&v, u);
@@ -40,46 +33,26 @@ fn gram_schmidt(a: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
                 v[k] -= proj[k];
             }
         }
-        q.push(normalize(&v));
+        q.push(normalize(v));
     }
     q
 }
 
-fn qr_decomposition(a: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<Vec<f64>>) {
-    let q = transpose(&gram_schmidt(&a));
-    let r = par_matrix_mult(transpose(&q), a);
+fn qr_decomposition(m: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<Vec<f64>>) {
+    let q = matrix_transpose::par_transpose(gram_schmidt(&m));
+    let r = par_matrix_mult(matrix_transpose::par_transpose(q.clone()), m);
     (q, r)
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::matrix_det::{forward_elima, qr_decomposition};
-    use super::{det, forward_elim};
+    use super::{qr_decomposition, det};
+    use std::time::{Duration, Instant};
 
-    #[test]
-    fn det_test() {
-        // TODO: implement test cases
-        let matrix = vec![
-            vec![2.0, 1.0, -1.0],
-            vec![-3.0, -1.0, 2.0],
-            vec![-2.0, 1.0, 2.0],
-        ];
-        let result = vec![
-            vec![2.0, 1.0, -1.0],
-            vec![0.0, 0.5, 0.5],
-            vec![0.0, 0.0, -1.0],
-        ];
-        assert_eq!(forward_elim(&matrix),result)
-    }
-    #[test]
-    fn tas() {
-        let mut a: Vec<Vec<f64>> = vec![
-            vec![1., 1., 1.],
-            vec![2., 3., 1.],
-            vec![-3., 4., -2.]
-        ];
-        println!("{:?}", forward_elima(&mut a))
+    fn timed<R, F>(f: F) -> (R, Duration) where F: Fn() -> R {
+        let starting_point = Instant::now();
+        let res = f();
+        (res, starting_point.elapsed())
     }
 
     #[test]
@@ -87,28 +60,27 @@ mod tests {
         let matrix = vec![
             vec![2.0, 1.0, -1.0],
             vec![-3.0, -1.0, 2.0],
-            vec![-2.0, 1.0, 2.0],
-        ];
+            vec![-2.0, 1.0, 2.0], ];
 
         let matrix2 = vec![
             vec![1.0, 2.0, 3.0],
             vec![4.0, 5.0, 6.0],
-            vec![7.0, 8.0, 9.0],
-        ];
+            vec![7.0, 8.0, 9.0], ];
 
         let matrix3 = vec![
             vec![1.0, 0.0, -2.0],
             vec![3.0, 1.0, -2.0],
-            vec![-5.0, -1.0, 9.0],
-        ];
+            vec![-5.0, -1.0, 9.0], ];
 
-        // let (q,r) = qr_decomposition(&matrix);
-        let (q,r) = qr_decomposition(&matrix3);
-        let (q,r) = qr_decomposition(&matrix);
-
+        let (q,r) = qr_decomposition(matrix3.clone());
         println!("{:?}", q);
         println!("{:?}", r);
-        let ans = det(matrix);
+        let ans = det(matrix3.clone());
         println!("{:?}",ans);
+
+        let two_d_matrix = vec![(0..=400).map(|a| a as f64).collect::<Vec<_>>(); 400];
+
+        let (output, time) = timed(|| det(two_d_matrix.clone()));
+        println!("determinant of matrix with 1024-size    time: {:?}", time);
     }
 }
