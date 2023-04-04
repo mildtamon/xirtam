@@ -11,14 +11,14 @@ fn det(m: Vec<Vec<f64>>) -> f64 {
 }
 
 // euclidean norm
-fn normalize(v: Vec<f64>) -> Vec<f64> {
-    let norm: f64 = v.iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
+fn par_norm(v: Vec<f64>) -> Vec<f64> {
+    let norm: f64 = v.par_iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
     v.iter().map(|each| each / norm).collect()
 }
 
 // projection of vector v to u
-fn project(v: &Vec<f64>, u: &Vec<f64>) -> Vec<f64> {
-    let norm_u = u.iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
+fn par_project(v: &Vec<f64>, u: &Vec<f64>) -> Vec<f64> {
+    let norm_u = u.par_iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
     u.par_iter().map(|each| each *( par_dot_product(v, u) / norm_u)).collect()
 }
 
@@ -28,12 +28,12 @@ fn gram_schmidt(m: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
         let mut v: Vec<f64> = m.par_iter().map(|row| row[j]).collect();
         for i in 0..j {
             let u = &q[i];
-            let proj = project(&v, u);
+            let proj = par_project(&v, u);
             for k in 0..v.len() {
                 v[k] -= proj[k];
             }
         }
-        q.push(normalize(v));
+        q.push(par_norm(v));
     }
     q
 }
