@@ -1,9 +1,17 @@
 use rayon::prelude::*;
-use crate::matrix_multiply_dot::{par_dot_product, par_matrix_mult};
+use crate::matrix_multiply_dot::{par_dot_product, par_matrix_mult, seq_matrix_mult};
 use crate::matrix_transpose;
 
-fn det(m: Vec<Vec<f64>>) -> f64 {
-    let (q, r) = qr_decomposition(m);
+fn par_det(m: Vec<Vec<f64>>) -> f64 {
+    let (q, r) = par_qr_decomposition(m);
+    r.par_iter()
+        .enumerate()
+        .map(|(i, row)| row[i])
+        .product()
+}
+
+fn seq_det(m: Vec<Vec<f64>>) -> f64 {
+    let (q, r) = seq_qr_decomposition(m);
     r.par_iter()
         .enumerate()
         .map(|(i, row)| row[i])
@@ -15,6 +23,7 @@ fn par_norm(v: Vec<f64>) -> Vec<f64> {
     let norm: f64 = v.par_iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
     v.iter().map(|each| each / norm).collect()
 }
+
 
 // projection of vector v to u
 fn par_project(v: &Vec<f64>, u: &Vec<f64>) -> Vec<f64> {
@@ -38,15 +47,21 @@ fn gram_schmidt(m: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     q
 }
 
-fn qr_decomposition(m: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<Vec<f64>>) {
+fn par_qr_decomposition(m: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<Vec<f64>>) {
     let q = matrix_transpose::par_transpose(gram_schmidt(&m));
     let r = par_matrix_mult(matrix_transpose::par_transpose(q.clone()), m);
     (q, r)
 }
 
+fn seq_qr_decomposition(m: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<Vec<f64>>) {
+    let q = matrix_transpose::seq_transpose(gram_schmidt(&m));
+    let r = seq_matrix_mult(matrix_transpose::seq_transpose(q.clone()), m);
+    (q, r)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{qr_decomposition, det};
+    use super::{ par_det, seq_det};
     use std::time::{Duration, Instant};
 
     fn timed<R, F>(f: F) -> (R, Duration) where F: Fn() -> R {
@@ -62,12 +77,16 @@ mod tests {
             vec![3.0, 1.0, -2.0],
             vec![-5.0, -1.0, 9.0], ];
 
-        let (q,r) = qr_decomposition(matrix.clone());
-        let ans = det(matrix.clone());
+        // let (q,r) = qr_decomposition(matrix.clone());
+        // let ans = det(matrix.clone());
 
-        let two_d_matrix = vec![(0..=300).map(|a| a as f64).collect::<Vec<_>>(); 300];
+        let two_d_matrix = vec![(0..=500).map(|a| a as f64).collect::<Vec<_>>(); 500];
 
-        let (output, time) = timed(|| det(two_d_matrix.clone()));
-        println!("determinant of matrix with 300-size    time: {:?}", time);
+        let (output, time) = timed(|| par_det(two_d_matrix.clone()));
+        println!("parallel determinant of matrix with 500-size    time: {:?}", time);
+
+        let (output, time) = timed(|| par_det(two_d_matrix.clone()));
+        println!("sequential determinant of matrix with 500-size    time: {:?}", time);
+
     }
 }
