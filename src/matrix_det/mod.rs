@@ -58,27 +58,14 @@ mod tests {
     #[test]
     fn qr_test() {
         let matrix = vec![
-            vec![2.0, 1.0, -1.0],
-            vec![-3.0, -1.0, 2.0],
-            vec![-2.0, 1.0, 2.0], ];
-
-        let matrix2 = vec![
-            vec![1.0, 2.0, 3.0],
-            vec![4.0, 5.0, 6.0],
-            vec![7.0, 8.0, 9.0], ];
-
-        let matrix3 = vec![
             vec![1.0, 0.0, -2.0],
             vec![3.0, 1.0, -2.0],
             vec![-5.0, -1.0, 9.0], ];
 
-        let (q,r) = qr_decomposition(matrix3.clone());
-        println!("{:?}", q);
-        println!("{:?}", r);
-        let ans = det(matrix3.clone());
-        println!("{:?}",ans);
+        let (q,r) = qr_decomposition(matrix.clone());
+        let ans = det(matrix.clone());
 
-        let two_d_matrix = vec![(0..=400).map(|a| a as f64).collect::<Vec<_>>(); 400];
+        let two_d_matrix = vec![(0..=300).map(|a| a as f64).collect::<Vec<_>>(); 300];
 
         let (output, time) = timed(|| det(two_d_matrix.clone()));
         println!("determinant of matrix with 1024-size    time: {:?}", time);
