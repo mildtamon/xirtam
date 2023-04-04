@@ -68,6 +68,6 @@ mod tests {
         let two_d_matrix = vec![(0..=300).map(|a| a as f64).collect::<Vec<_>>(); 300];
 
         let (output, time) = timed(|| det(two_d_matrix.clone()));
-        println!("determinant of matrix with 1024-size    time: {:?}", time);
+        println!("determinant of matrix with 300-size    time: {:?}", time);
     }
 }
