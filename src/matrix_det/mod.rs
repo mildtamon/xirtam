@@ -24,7 +24,6 @@ fn par_norm(v: Vec<f64>) -> Vec<f64> {
     v.iter().map(|each| each / norm).collect()
 }
 
-
 // projection of vector v to u
 fn par_project(v: &Vec<f64>, u: &Vec<f64>) -> Vec<f64> {
     let norm_u = u.par_iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
@@ -61,7 +60,7 @@ fn seq_qr_decomposition(m: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<Vec<f64>>) {
 
 #[cfg(test)]
 mod tests {
-    use super::{ par_det, seq_det};
+    use super::{par_det, seq_det};
     use std::time::{Duration, Instant};
 
     fn timed<R, F>(f: F) -> (R, Duration) where F: Fn() -> R {
@@ -77,16 +76,14 @@ mod tests {
             vec![3.0, 1.0, -2.0],
             vec![-5.0, -1.0, 9.0], ];
 
-        // let (q,r) = qr_decomposition(matrix.clone());
-        // let ans = det(matrix.clone());
+        assert_eq!(3.0, par_det(matrix).round());
 
-        let two_d_matrix = vec![(0..=500).map(|a| a as f64).collect::<Vec<_>>(); 500];
-
-        let (output, time) = timed(|| par_det(two_d_matrix.clone()));
-        println!("parallel determinant of matrix with 500-size    time: {:?}", time);
+        let two_d_matrix = vec![(0..=400).map(|a| a as f64).collect::<Vec<_>>(); 400];
 
         let (output, time) = timed(|| par_det(two_d_matrix.clone()));
-        println!("sequential determinant of matrix with 500-size    time: {:?}", time);
+        println!("parallel determinant of matrix with 400-size    time: {:?}", time);
 
+        let (output, time) = timed(|| seq_det(two_d_matrix.clone()));
+        println!("sequential determinant of matrix with 400-size    time: {:?}", time);
     }
 }

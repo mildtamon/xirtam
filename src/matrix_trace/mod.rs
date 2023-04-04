@@ -1,11 +1,11 @@
 use rayon::iter::*;
 
 fn seq_trace(m: &Vec<Vec<f64>>) -> f64 {
-    // sequential matrix trace is better (in smaller matrix)
+    // sequential matrix trace is better (in small matrix)
     (0..m.len()).into_iter().map(|index| m[index][index]).sum()
 }
 
-fn par_trace(m: &Vec<Vec<f64>>) -> (f64) {
+fn par_trace(m: &Vec<Vec<f64>>) -> f64 {
     (0..m.len()).into_par_iter().map(|index| m[index][index]).sum()
 }
 
@@ -23,8 +23,8 @@ mod tests {
     #[test]
     fn trace_test() {
         let test = vec![vec![1.0 ,2.0 ,3.0],
-                                vec![4.0 ,5.0 ,6.0],
-                                vec![7.0 ,8.0 ,9.0]];
+                        vec![4.0 ,5.0 ,6.0],
+                        vec![7.0 ,8.0 ,9.0]];
         let small_matrix = vec![(0..=700).map(|a| a as f64).collect::<Vec<_>>(); 700];
         let two_d_matrix = vec![(0..=1024).map(|a| a as f64).collect::<Vec<_>>(); 1024];
 

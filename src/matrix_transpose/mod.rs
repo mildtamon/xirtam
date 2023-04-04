@@ -22,6 +22,7 @@ mod tests {
         let res = f();
         (res, starting_point.elapsed())
     }
+
     #[test]
     fn transpose_test() {
         assert_eq!(vec![vec![1.0, 2.0],
